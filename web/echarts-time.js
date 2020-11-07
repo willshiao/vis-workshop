@@ -1,5 +1,6 @@
 const dom = document.getElementById('graph')
 const chart = echarts.init(dom)
+let allData = null
 const option = {
   title: {
     text: 'Course Enrollment Chart'
@@ -27,7 +28,6 @@ const option = {
   },
   yAxis: {
     type: 'value',
-    // boundaryGap: [0, '100%'],
     splitLine: {
       show: false
     }
@@ -74,9 +74,9 @@ function partitionDataByCrn (data) {
   return output
 }
 
-function addData (courseData) {
+function addData (courseData, term = 'Spring 2018') {
   const filteredData = courseData
-    .filter(x => x.termDesc === 'Spring 2018' && x.scheduleTypeDescription === 'Lecture')
+    .filter(x => x.termDesc === term && x.scheduleTypeDescription === 'Lecture')
   const partitioned = partitionDataByCrn(filteredData)
   for (const crn in partitioned) {
     const crnData = partitioned[crn]
@@ -86,7 +86,6 @@ function addData (courseData) {
         item.enrollment
       ]
     })
-    data.push()
     const name = `${crnData[0].subjectCourse} (${crnData[0].courseReferenceNumber})`
     option.legend.data.push(name)
     option.series.push({
@@ -116,8 +115,8 @@ async function main() {
   // Make requests in parallel
   const reqs = ['data/courses/cs010.json', 'data/courses/cs012.json', 'data/courses/cs014.json']
     .map(async x => (await fetch(x)).json())
-  const courseData = await Promise.all(reqs)
-  courseData.map(addData)
+  allData = await Promise.all(reqs)
+  allData.forEach(x => addData(x))
   chart.setOption(option, true)
 }
 
