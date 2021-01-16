@@ -1,2 +1,2 @@
-# cutie-vis-workshop
-Cutie Hack 2020 Data Visualization Workshop
+# Cutie/Rose Hack Data Visualization Workshop
+
